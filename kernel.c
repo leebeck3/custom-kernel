@@ -111,6 +111,19 @@ typedef unsigned int uint32_t;
 typedef uint32_t size_t;
 
 extern char __bss[], __bss_end[], __stack_top[];
+extern char __free_ram[], __free_ram_end[];
+
+paddr_t alloc_pages(uint32_t n) {
+	static paddr_t next_paddr = (paddr_t) __free_ram;
+	paddr_t paddr = next_paddr;
+	next_paddr += n * PAGE_SIZE;
+
+	if (next_paddr > (paddr_t) __free_ram_end)
+		PANIC("out of memory");
+
+	memset((void *) paddr, 0, n * PAGE_SIZE);
+	return paddr;
+}
 
 void putchar(char ch) {
 	sbi_call(ch, 0, 0, 0, 0, 0, 0, 1 /* Console Putchar */);	
@@ -119,10 +132,13 @@ void putchar(char ch) {
 void kernel_main(void) {
 	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
 
-	WRITE_CSR(stvec, (uint32_t) kernel_entry);
-	printf("custom-kernel: running fine");
-	__asm__ __volatile__("unimp");
-	printf("custom-kernel: running fine");
+	paddr_t paddr0 = alloc_pages(2);
+	paddr_t paddr1 = alloc_pages(1);
+	printf("alloc_pages test: paddr0=%x\n", paddr0);
+	printf("alloc_pages test: paddr1=%x\n", paddr1);
+
+	PANIC("booted!");
+
 }
 
 __attribute__((section(".text.boot")))
