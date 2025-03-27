@@ -2,16 +2,13 @@
 
 #pragma once
 
+extern struct process *proc_a;
+extern struct process *proc_b;
+
 struct sbiret {
 	long error;
 	long value;
 };
-
-#define PANIC(fmt, ...)									\
-	do {										\
-		printf("PANIC: %s:%d: " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);   \
-		while (1) {}								\
-	} while (0)
 
 struct trap_frame {
 	uint32_t ra;
@@ -45,6 +42,14 @@ struct trap_frame {
 	uint32_t s11;
 	uint32_t sp;
 } __attribute__((packed));
+
+void putchar(char ch);
+
+#define PANIC(fmt, ...)									\
+	do {										\
+		printf("PANIC: %s:%d: " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);   \
+		while (1) {}								\
+	} while (0)
 
 #define READ_CSR(reg)							\
 	({								\
