@@ -16,7 +16,8 @@ __attribute__((naked))
 __attribute__((aligned(4)))
 void kernel_entry(void) {
     __asm__ __volatile__(
-        "csrw sscratch, sp\n"
+        "csrrw sp, sscratch, sp\n"
+
         "addi sp, sp, -4 * 31\n"
         "sw ra,  4 * 0(sp)\n"
         "sw gp,  4 * 1(sp)\n"
@@ -51,6 +52,9 @@ void kernel_entry(void) {
 
         "csrr a0, sscratch\n"
         "sw a0, 4 * 30(sp)\n"
+
+	"addi a0, sp, 4 * 31\n"
+	"csrw sscratch, a0\n"
 
         "mv a0, sp\n"
         "call handle_trap\n"
@@ -134,11 +138,19 @@ void putchar(char ch) {
 void kernel_main(void) {
 	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
 
+	printf("\n\n");
+
+	WRITE_CSR(stvec, (uint32_t) kernel_entry);
+
+	idle_proc = create_process((uint32_t) NULL);
+	idle_proc->pid = 0;
+	current_proc = idle_proc;
+
 	proc_a = create_process((uint32_t) proc_a_entry);
 	proc_b = create_process((uint32_t) proc_b_entry);
-	proc_a_entry();
 
-	PANIC("booted!");
+	yield();
+	PANIC("switched to idle process");
 
 }
 

@@ -44,6 +44,7 @@ struct trap_frame {
 } __attribute__((packed));
 
 void putchar(char ch);
+void yield(void);
 
 #define PANIC(fmt, ...)									\
 	do {										\
@@ -63,3 +64,10 @@ void putchar(char ch);
 		uint32_t __tmp = (value);				\
 		__asm__ __volatile__("csrw " #reg ", %0" ::"r"(__tmp));	\
 	} while (0)
+
+#define SATP_SV32 (1u << 31)
+#define PAGE_V    (1 << 0)
+#define PAGE_R    (1 << 1)
+#define PAGE_W    (1 << 2)
+#define PAGE_X    (1 << 3)
+#define PAGE_U    (1 << 4)
