@@ -14,5 +14,5 @@ void delay(void);
 void proc_a_entry(void);
 void proc_b_entry(void);
 struct process *create_process(uint32_t);
-struct process *current_proc;
-struct process *idle_proc;
+extern struct process *current_proc;
+extern struct process *idle_proc;

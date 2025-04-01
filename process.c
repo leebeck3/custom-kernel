@@ -1,6 +1,9 @@
 #include "kernel.h"
 #include "process.h"
 
+struct process *current_proc;
+struct process *idle_proc;
+
 __attribute__((naked)) void switch_context(uint32_t *prev_sp,
                                            uint32_t *next_sp) {
     __asm__ __volatile__(
