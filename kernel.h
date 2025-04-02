@@ -4,6 +4,7 @@
 
 extern struct process *proc_a;
 extern struct process *proc_b;
+extern char __free_ram[], __free_ram_end[];
 
 struct sbiret {
 	long error;
@@ -45,6 +46,8 @@ struct trap_frame {
 
 void putchar(char ch);
 void yield(void);
+paddr_t alloc_pages(uint32_t n);
+void map_page(uint32_t *table1, uint32_t vaddr, paddr_t paddr, uint32_t flags);
 
 #define PANIC(fmt, ...)									\
 	do {										\
