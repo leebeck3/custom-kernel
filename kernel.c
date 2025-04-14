@@ -147,7 +147,7 @@ void handle_trap(struct trap_frame *f) {
 		handle_syscall(f);
 		user_pc += 4;
 	} else {
-		PANIC("unexpected trap scause=%x, stval=%x, sepc=%x\n", scause, stval, user_pc);
+		PANIC("unexpected trap scause=%x, stval=%x, sepc=%x sp=%x\n", scause, stval, user_pc, f->sp);
 	}
 
 	WRITE_CSR(sepc, user_pc);
