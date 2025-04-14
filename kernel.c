@@ -4,6 +4,7 @@
 
 extern char __bss[], __bss_end[], __stack_top[];
 extern char __free_ram[], __free_ram_end[];
+extern char _binary_shell_bin_start[], _binary_shell_bin_size[];
 
 typedef unsigned char uint8_t;
 typedef unsigned int uint32_t;
@@ -160,12 +161,11 @@ void kernel_main(void) {
 
 	WRITE_CSR(stvec, (uint32_t) kernel_entry);
 
-	idle_proc = create_process((uint32_t) NULL);
+	idle_proc = create_process(NULL, 0);
 	idle_proc->pid = 0;
 	current_proc = idle_proc;
 
-	proc_a = create_process((uint32_t) proc_a_entry);
-	proc_b = create_process((uint32_t) proc_b_entry);
+	create_process(_binary_shell_bin_start, (size_t) _binary_shell_bin_size);
 
 	yield();
 	PANIC("switched to idle process");
@@ -181,4 +181,4 @@ void boot(void) {
 			:
 			: [stack_top] "r" (__stack_top)
 		);
-}
+	}

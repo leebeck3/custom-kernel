@@ -2,6 +2,7 @@
 
 #define PROC_UNUSED   0   // Unused process control structure
 #define PROC_RUNNABLE 1   // Runnable process
+#define SSTATUS_SPIE (1 << 5)
 
 struct process {
     int pid;             // Process ID
@@ -14,6 +15,6 @@ struct process {
 void delay(void);
 void proc_a_entry(void);
 void proc_b_entry(void);
-struct process *create_process(uint32_t);
+struct process *create_process(const void *image, size_t image_size);
 extern struct process *current_proc;
 extern struct process *idle_proc;

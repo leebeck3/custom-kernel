@@ -48,6 +48,7 @@ void putchar(char ch);
 void yield(void);
 paddr_t alloc_pages(uint32_t n);
 void map_page(uint32_t *table1, uint32_t vaddr, paddr_t paddr, uint32_t flags);
+void user_entry(void);
 
 #define PANIC(fmt, ...)									\
 	do {										\
@@ -74,3 +75,4 @@ void map_page(uint32_t *table1, uint32_t vaddr, paddr_t paddr, uint32_t flags);
 #define PAGE_W    (1 << 2)
 #define PAGE_X    (1 << 3)
 #define PAGE_U    (1 << 4)
+#define USER_BASE 0x1000000
