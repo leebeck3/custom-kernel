@@ -13,6 +13,10 @@ SECTIONS {
 	}
 
 	.data : ALIGN(4) {
+		*(.data .data.*);
+	}
+
+	.bss : ALIGN(4) {
 		*(.bss .bss.* .sbss .sbss.*);
 
 		. = ALIGN(16);
