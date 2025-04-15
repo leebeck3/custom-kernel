@@ -134,6 +134,11 @@ void handle_syscall(struct trap_frame *f) {
 		case SYS_PUTCHAR:
 			putchar(f->a0);
 			break;
+		case SYS_EXIT:
+			printf("process %d exited\n", current_proc->pid);
+			current_proc->state = PROC_EXITED;
+			yield();
+			PANIC("unreachable");
 		default:
 			PANIC("unexpected syscall a3=%x\n", f->a3);
 		}

@@ -77,3 +77,4 @@ void user_entry(void);
 #define PAGE_U    (1 << 4)
 #define USER_BASE 0x1000000
 #define SCAUSE_ECALL 8
+#define PROC_EXITED  2
