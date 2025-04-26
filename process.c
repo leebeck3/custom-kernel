@@ -56,7 +56,7 @@ __attribute__((naked)) void user_entry(void) {
 			"sret			   \n"
 			:
 			: [sepc] "r" (USER_BASE),
-			  [sstatus] "r" (SSTATUS_SPIE)
+			  [sstatus] "r" (SSTATUS_SPIE | SSTATUS_SUM)
 			);
 	}
 
@@ -92,12 +92,13 @@ struct process *create_process(const void *image, size_t image_size) {
     *--sp = (uint32_t) user_entry;  // ra
 
     uint32_t *page_table = (uint32_t *) alloc_pages(1);
-
+    //kernel memory
     for (paddr_t paddr = (paddr_t) __kernel_base;
 	     paddr < (paddr_t) __free_ram_end; paddr += PAGE_SIZE)
 	    map_page(page_table, paddr, paddr, PAGE_R | PAGE_W | PAGE_X);
-
-    // Initialize fields.
+	
+    map_page(page_table, VIRTIO_BLK_PADDR, VIRTIO_BLK_PADDR, PAGE_R | PAGE_W);
+    //userspace memory
     for (uint32_t off = 0; off < image_size; off += PAGE_SIZE) {
 	paddr_t page = alloc_pages(1);
 
